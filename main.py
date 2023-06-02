@@ -96,7 +96,7 @@ def main():
                                                         dsConf.get('results_path'), 'MI')
 
         if (int(configuration.get('Attack_MI_Train'))):
-            #### This Part is based ion the Training Dataset
+            #### This Part is based on the Training Dataset. Attacking the Model using the ranking features of the Training Dataset
             execution_pipeline = pipeline.Pipeline(path_models=dsConf.get('pathModels'))
 
             eps = [0.001, 0.01]

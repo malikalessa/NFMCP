@@ -1,10 +1,5 @@
 import pandas as pd
-import os
 import dalex as dx
-from keras.models import load_model
-from sklearn.utils import shuffle
-from math import sqrt
-from sklearn import preprocessing
 
 
 import numpy as np
@@ -39,10 +34,6 @@ class DalexDatasets():
     def loadDalexDatasets(self, dataset_type):
         path =  self.path_results + dataset_type +'_Dalex_ranking.csv'
         df = pd.read_csv(path)
-
-        #df = list(df['variable'])
-        #print(df)
-
         print('The Dalex File has been uploaded')
         return df
 
@@ -79,7 +70,6 @@ class DalexDatasets():
         columns = list(variable_importance['variable'])
         da_rank = pd.DataFrame(da_rank, columns=columns)
         da_rank.iloc[0] = variable_importance['dropout_loss']
-        #da_rank = (da_rank[x_test.columns])
         da_rank = da_rank.T
 
         print(da_rank.shape)

@@ -53,7 +53,7 @@ def NN(params):
     YTraining = np_utils.to_categorical(YTraining, n_class)
     YValidation = np_utils.to_categorical(YValidation, n_class)
 
-    h = model.fit(XTraining, YTraining, batch_size=params["batch"], epochs=1, verbose=2, callbacks=callbacks_list
+    h = model.fit(XTraining, YTraining, batch_size=params["batch"], epochs=150, verbose=2, callbacks=callbacks_list
                   , shuffle=True, validation_data=(XValidation, YValidation))
 
     scores = [h.history['val_loss'][epoch] for epoch in range(len(h.history['loss']))]
