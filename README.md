@@ -41,3 +41,13 @@ The implementation for all the experiments used in this work are listed in this 
 
 
 ## Replicate the Experiments
+* ###### defensive = 0   &emsp;        # 1 for defensive phase, 0 for offensive phase <br />
+
+* ###### TRAIN_BASELINE = 0   &emsp;        # 1 train baseline with hyperopt <br />
+* ###### Dalex = 1   &emsp; # 1 to generate features ranking based on Dalex  <br />
+* ###### Rank_Dalex_features_Train = 0 &emsp;  # 1 To compute feature selection using Dalex Features<br />
+ 
+
+* ###### Attack_Dalex_Train = 1      &emsp;          #  1 To attack the model using  the ranking of the training dataset <br />
+* ###### Attack_MI = 1      &emsp;          #  1 To attack the model using  the ranking of the training dataset <br />
+
