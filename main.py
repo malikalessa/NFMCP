@@ -90,7 +90,7 @@ def main():
        
 
 
-    else :
+    elif(int(configurations.get('defensive')== 0) :
         ########################## Offensive Part    ############################
 
         ##Compute feature importance based on the correctly classified test samples
