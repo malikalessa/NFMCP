@@ -29,13 +29,13 @@ class Train_Baseline():
 
 
     def train_model_based_feature(self, x_train, y_train,x_test,y_test, train_model, save_model,feature_importance,
-                                  results_path,explainer):
+                                  results_path,explainer,N):
 
         print(feature_importance)
         if train_model:
             print('Train DNN Model_....')
 
-            for i in range(5,x_train.shape[1],5):
+            for i in range(N,x_train.shape[1],N):
                 # To remove the range and add a parameters
                 train = x_train[feature_importance[:i]]
                 test = x_test[feature_importance[:i]]
