@@ -68,18 +68,7 @@ def main():
                                                     configuration.get('save_model'), dalex_ranking_features,
                                                     dsConf.get('results_path'), 'dalex',N)
 
-        if (int(configuration.get('Attack_Dalex_Train'))):
-            #### This Part is based ion the Training Dataset
-            execution_pipeline = pipeline.Pipeline(path_models=dsConf.get('pathModels'))
-
-            eps = [0.001, 0.01]
-            dalex_ranking = dalex_ranking.set_index(dalex_ranking['variable'].values)
-            dalex_ranking_features =  (dalex_ranking['variable'])
-
-            execution_pipeline.FGSM(x_test, y_test, dsConf.get('AdvDataset_path'), eps, model,
-                                dalex_ranking_features,
-                                dsConf.get('Label'), N, 'Dalex', 'Train')
-
+ 
         ##### Mutual Info
 
         mutual_info = pipeline.Pipeline(dsConf.get('pathModels'))
@@ -92,16 +81,7 @@ def main():
             model = execution.train_model_based_feature(x_train, y_train, x_test, y_test,                                                        configuration.get('save_model'), MI,
                                                         dsConf.get('results_path'), 'MI',N)
 
-        if (int(configuration.get('Attack_MI_Train'))):
-            #### This Part is based on the Training Dataset. Attacking the Model using the ranking features of the Training Dataset
-            execution_pipeline = pipeline.Pipeline(path_models=dsConf.get('pathModels'))
-
-            eps = [0.001, 0.01]
-
-            MI_ranking = MI.set_index(MI['Features'].values)
-            MI_ranking =  (MI_ranking['Features'])
-            execution_pipeline.FGSM(x_test, y_test, dsConf.get('AdvDataset_path'), eps, model,
-                                MI_ranking,dsConf.get('Label'), N, 'MI', 'Train')
+       
 
     if (int(configuration.get('defensive')) == 0):
 
@@ -109,7 +89,7 @@ def main():
 
         ##Compute feature importance based on the correctly classified test samples
 
-        #### This Part is based ion the Testing Dataset
+        #### This Part is based on the Testing Dataset
         eps = [0.001,0.01]
         execution_pipeline = pipeline.Pipeline(path_models=dsConf.get('pathModels'))
 
