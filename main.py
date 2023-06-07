@@ -110,7 +110,7 @@ def main():
         execution_pipeline.FGSM(TestC_Dalex, y_TestC_Dalex, dsConf.get('AdvDataset_path'), eps, model,
                                 feature_importance_Dalex,
                                 dsConf.get('Label'), N,'Dalex', 'TestC')
-
+        # Add a comment to explain TestC
         feature_importance_MI, TestC_MI, y_TestC_MI = execution_pipeline.mutual_info(x_train,y_train,
                                                         x_test, y_test, model, dsConf.get('results_path'),'TestC',N)
         execution_pipeline.FGSM(TestC_MI, y_TestC_MI, dsConf.get('AdvDataset_path'), eps, model,
