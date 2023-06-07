@@ -37,7 +37,7 @@ def main():
     print('X_Test Shape : ', x_test.shape)
     dataset_columns = x_train.columns
 
-    # The step to be selected
+
     N = int(configuration.get('N'))
 
     ### Train the Baseline Model
@@ -60,16 +60,25 @@ def main():
             dalex_ranking = dalex_values.loadDalexDatasets('Train')
         else:
             dalex_ranking = dalex_values.loadDalexDatasets('Train')
-        
-        # change the name to " Dalex_feature_selection
-        if (int(configuration.get('Rank_Dalex_features_Train'))):
+
+        if (int(configuration.get('Dalex_Feature_Selection'))):
             dalex_ranking_features =  list(dalex_ranking['variable'])
 
             model = execution.train_model_based_feature(x_train, y_train, x_test, y_test,
-                                                    int(configuration.get('Train_model_features')),
                                                     configuration.get('save_model'), dalex_ranking_features,
-                                                    dsConf.get('results_path'), 'dalex')
+                                                    dsConf.get('results_path'), 'dalex',N)
 
+        if (int(configuration.get('Attack_Dalex_Train'))):
+            #### This Part is based ion the Training Dataset
+            execution_pipeline = pipeline.Pipeline(path_models=dsConf.get('pathModels'))
+
+            eps = [0.001, 0.01]
+            dalex_ranking = dalex_ranking.set_index(dalex_ranking['variable'].values)
+            dalex_ranking_features =  (dalex_ranking['variable'])
+
+            execution_pipeline.FGSM(x_test, y_test, dsConf.get('AdvDataset_path'), eps, model,
+                                dalex_ranking_features,
+                                dsConf.get('Label'), N, 'Dalex', 'Train')
 
         ##### Mutual Info
 
@@ -77,43 +86,51 @@ def main():
         MI = mutual_info.mutual_info(x_train, y_train, x_test, y_test, model, dsConf.get('results_path'),
                                      'Train', N)
 
-        # change the name to " MI_feature_selection
-
-        if (int(configuration.get('MI_Train'))):
+        if (int(configuration.get('MI_Feature_Selection'))):
             MI = list(MI['Features'])
 
-            model = execution.train_model_based_feature(x_train, y_train, x_test, y_test,
-                                                        int(configuration.get('Train_model_features')),
-                                                        configuration.get('save_model'), MI,
-                                                        dsConf.get('results_path'), 'MI')
+            model = execution.train_model_based_feature(x_train, y_train, x_test, y_test,                                                        configuration.get('save_model'), MI,
+                                                        dsConf.get('results_path'), 'MI',N)
 
-       
+        if (int(configuration.get('Attack_MI_Train'))):
+            #### This Part is based on the Training Dataset. Attacking the Model using the ranking features of the Training Dataset
+            execution_pipeline = pipeline.Pipeline(path_models=dsConf.get('pathModels'))
 
+            eps = [0.001, 0.01]
 
-    elif(int(configurations.get('defensive')== 0) :
+            MI_ranking = MI.set_index(MI['Features'].values)
+            MI_ranking =  (MI_ranking['Features'])
+            execution_pipeline.FGSM(x_test, y_test, dsConf.get('AdvDataset_path'), eps, model,
+                                MI_ranking,dsConf.get('Label'), N, 'MI', 'Train')
+
+    if (int(configuration.get('defensive')) == 0):
+
         ########################## Offensive Part    ############################
 
         ##Compute feature importance based on the correctly classified test samples
 
         #### This Part is based ion the Testing Dataset
-        
-        
-         #### Add if statement to choose between dalex and MI
         eps = [0.001,0.01]
         execution_pipeline = pipeline.Pipeline(path_models=dsConf.get('pathModels'))
 
-        dalex_values = dx.DalexDatasets(dsConf.get('results_path'))
+        # TestC is the explanations of the samples correctly predicted by the explainer
+        if (int(configuration.get('Offensive_Dalex'))):
+            print('Strart Offensive phase based on Dalex ...')
+            dalex_values = dx.DalexDatasets(dsConf.get('results_path'))
 
-        feature_importance_Dalex, TestC_Dalex, y_TestC_Dalex = dalex_values.Dalex_Ranking_C_offensive(x_test, y_test,
-         model)
+            feature_importance_Dalex, TestC_Dalex, y_TestC_Dalex = dalex_values.Dalex_Ranking_C_offensive(x_test, y_test,
+             model)
 
-        execution_pipeline.FGSM(TestC_Dalex, y_TestC_Dalex, dsConf.get('AdvDataset_path'), eps, model,
+            execution_pipeline.FGSM(TestC_Dalex, y_TestC_Dalex, dsConf.get('AdvDataset_path'), eps, model,
                                 feature_importance_Dalex,
                                 dsConf.get('Label'), N,'Dalex', 'TestC')
-        # Add a comment to explain TestC
-        feature_importance_MI, TestC_MI, y_TestC_MI = execution_pipeline.mutual_info(x_train,y_train,
+
+        if (int(configuration.get('Offensive_MI'))):
+            print('Strart Offensive phase based on MI ...')
+
+            feature_importance_MI, TestC_MI, y_TestC_MI = execution_pipeline.mutual_info(x_train,y_train,
                                                         x_test, y_test, model, dsConf.get('results_path'),'TestC',N)
-        execution_pipeline.FGSM(TestC_MI, y_TestC_MI, dsConf.get('AdvDataset_path'), eps, model,
+            execution_pipeline.FGSM(TestC_MI, y_TestC_MI, dsConf.get('AdvDataset_path'), eps, model,
                                 feature_importance_MI,
                                 dsConf.get('Label'), N, 'MI', 'TestC')
 
