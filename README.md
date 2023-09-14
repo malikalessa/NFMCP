@@ -8,7 +8,7 @@ Malik AL-Essa, Giuseppina Andresini, Annalisa Appice, Donato Malerba
 
 # Cite this paper
 
-
+The paper has been accepted in New Frontiers in Mining Complex Patterns Workshop,ECML PKDD 2023 Conference.
 
 
 
